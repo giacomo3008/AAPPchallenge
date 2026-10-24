@@ -1,0 +1,5 @@
+c++ -std=c++17 -O2 -DNDEBUG -Wall -Wextra -Wpedantic main.cpp skip_list.cpp -o demo
+c++ -std=c++17 -O2 -DNDEBUG -Wall -Wextra -Wpedantic tests.cpp skip_list.cpp -o tests
+c++ -std=c++17 -O2 -DNDEBUG -Wall -Wextra -Wpedantic -DSKIPLIST_BUILD_FLAGS='"-std=c++17 -O2 -DNDEBUG -Wall -Wextra -Wpedantic -pthread"' benchmarks.cpp skip_list.cpp -I/workspace/scratch/58979f44275b/tmp/benchmark_manual/include -L/workspace/scratch/58979f44275b/tmp/benchmark_manual/lib -lbenchmark -pthread -o benchmarks
+c++ -std=c++17 -O2 -DNDEBUG -Wall -Wextra -Wpedantic -DCOUNT_WORK work_counts.cpp skip_list.cpp -o work_counts
+c++ -std=c++17 -g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined tests.cpp skip_list.cpp -o tests_sanitized
