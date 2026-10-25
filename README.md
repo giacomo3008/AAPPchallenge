@@ -1,115 +1,149 @@
 # Skip List Challenge
 
-Apri la cartella `skip_list_challenge` in VS Code e usa il terminale in quella cartella.
-Esegui i blocchi qui sotto nell'ordine. I comandi sono per macOS o Linux; su Windows usa WSL.
+Open the terminal in the project folder. These commands are for macOS and Linux.
+On Windows, you can use WSL.
 
-## 1. Preparazione, una sola volta
+**Author:** Giacomo Rigo. **Student ID:** 308362.
 
-Servono un compilatore C++17, Python 3.10 o successivo, Google Benchmark e Matplotlib.
+## 1. Setup
 
-Su macOS con Homebrew:
+You need a compiler that supports C++17, Google Benchmark, pkg-config,
+Python 3.10 or later, and Matplotlib.
+
+On macOS with Homebrew:
 ```bash
 brew install google-benchmark pkgconf
 ```
 
-Su Ubuntu/Debian:
+On Ubuntu/Debian:
 ```bash
 sudo apt update
 sudo apt install build-essential libbenchmark-dev pkg-config
 ```
 
-Per i grafici:
+For the plots:
 ```bash
 python3 -m pip install matplotlib==3.10.8
 ```
 
-## 2. Avvia l'esempio
+## 2. Compilation
 
+You can use Make or the manual commands. Choose one method.
+
+With Make:
+```bash
+make
+make tests_sanitized
+```
+
+`make` builds `demo`, `tests`, `benchmarks`, and `work_counts`.
+The second command builds the tests with memory checks.
+
+Or compile manually:
 ```bash
 c++ -std=c++17 -O2 -DNDEBUG -Wall -Wextra -Wpedantic main.cpp skip_list.cpp -o demo
-./demo
-```
-
-Guarda nel terminale la lista iniziale, le ricerche, lo split e l'unione.
-
-## 3. Controlla che funzioni
-
-```bash
 c++ -std=c++17 -O2 -DNDEBUG -Wall -Wextra -Wpedantic tests.cpp skip_list.cpp -o tests
-./tests
-```
-
-Deve comparire **TUTTI I TEST SUPERATI**.
-
-Per controllare anche gli errori di memoria:
-```bash
 c++ -std=c++17 -g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined tests.cpp skip_list.cpp -o tests_sanitized
-./tests_sanitized
-```
-
-Deve terminare senza errori dei sanitizer.
-
-## 4. Esegui gli esperimenti
-
-Compila i due programmi separati: il primo misura i tempi, il secondo conta il lavoro.
-```bash
 c++ -std=c++17 -O2 -DNDEBUG -Wall -Wextra -Wpedantic benchmarks.cpp skip_list.cpp $(pkg-config --cflags --libs benchmark) -pthread -o benchmarks
 c++ -std=c++17 -O2 -DNDEBUG -Wall -Wextra -Wpedantic -DCOUNT_WORK work_counts.cpp skip_list.cpp -o work_counts
 ```
 
-Poi avviali:
+`COUNT_WORK` enables the counters. Use it only for `work_counts`, not for timing.
+The Makefile already handles this.
+
+On my Mac, I needed to select SDK 26.5. In this case, I use:
+```bash
+make clean
+make CXX="/usr/bin/clang++ -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk -isystem /Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk/usr/include/c++/v1" all tests_sanitized
+```
+
+## 3. Example and tests
+
+```bash
+./demo
+./tests
+./tests_sanitized
+```
+
+The demo shows insertions, searches, split, and union.
+Both test programs should print `TUTTI I TEST SUPERATI` (all tests passed).
+The sanitizer version should finish without reporting errors.
+With Make, `make test` builds the tests if needed and runs the same tests as `./tests`.
+
+The tests compare the list with `std::set` and check its structure. They cover
+empty lists, duplicate keys, boundary keys, reuse of inputs, and preservation of nodes.
+They run 1000 mixed operations for each seed: 11, 42, and 2026.
+All tests and ASan/UBSan checks passed without errors.
+
+## 4. Experiments and plots
+
 ```bash
 mkdir -p results
 ./work_counts results/work.csv
 ./benchmarks --benchmark_out=results/timings.json --benchmark_out_format=json --benchmark_color=false > results/benchmark_console.txt 2>&1
-```
-
-Le misure dei tempi possono richiedere qualche minuto. Non usare `-DCOUNT_WORK` nel programma dei tempi.
-In alternativa ai due avvii puoi usare `python3 run_experiments.py`.
-
-I file `.hpp` non si avviano: sono inclusi dai sorgenti. Il Makefile e' incluso per la consegna;
-usarlo e' facoltativo: `make` compila i quattro programmi, `make tests_sanitized` compila il controllo di memoria.
-
-## 5. Crea i grafici e guarda i risultati
-
-```bash
 python3 plot_results.py
 ```
 
-Questo comando legge i risultati salvati, senza ripetere gli esperimenti.
+`work_counts` counts the work done by the algorithm. `benchmarks` measures the times.
+The measurements may take a few minutes. Previous results are overwritten.
+To create the plots again without running the experiments, use `python3 plot_results.py`.
 
-| File in `results` | Cosa guardare |
-|---|---|
-| `timings.png` | Come crescono i tempi con N; nel pannello split confronta versione strutturale e ricostruita. |
-| `logical_work.png` | Come cresce il lavoro contato, indipendentemente dai tempi. |
-| `complexity_fits.csv` | Modello stimato, coefficiente e RMS: un RMS piu' basso indica un fit piu' aderente ai dati. |
-| `work.csv` | I singoli contatori, comprese allocazioni e liberazioni dei nodi. |
-| `benchmark_console.txt` | Output completo e messaggi del programma dei tempi. |
+The following files are saved in `results`:
 
-I risultati inclusi sono gia' consultabili. Se rifai le prove, vengono sovrascritti.
-Conserva anche `timings.json`: contiene i dati grezzi richiesti dalla consegna.
+- `timings.json`: raw timing data, to keep for the submission;
+- `benchmark_console.txt`: benchmark output;
+- `work.csv`: work counts and node allocation/free counts;
+- `timings.png` and `logical_work.png`: plots, including the comparison of the two split methods;
+- `complexity_fits.csv`: automatically selected model, coefficient, and RMS error as a percentage.
 
-## Dati richiesti dalla consegna
+## 5. Experiment settings
 
-- **Parametri:** N = 1024, 4096, 16384, 65536, 262144, 1048576; seed delle altezze 11, 42, 2026;
-  per B si aggiunge 1000003. Query con seed 20261023 + N. Tre ripetizioni per seed, un solo thread.
-  Test: 1000 turni per seed. Tempi e coefficienti sono divisi per il batch: 256 ricerche o 64 inserimenti.
-- **Versioni delle misure incluse:** GCC 13.3.0, Google Benchmark 1.9.4, Python 3.12.14,
-  Matplotlib 3.10.8; Linux x86_64, AMD EPYC 9V74. Flag nei comandi sopra; dettagli in `results/environment.json`.
-  Se rifai le misure, aggiorna ambiente e versioni con quelli del tuo computer
-  (`c++ --version` e `pkg-config --modversion benchmark`).
-- **Memoria:** test e ASan/UBSan superati; log in `results/tests.txt` e `results/sanitizers.txt`.
-  Nel contenitore LeakSanitizer non e' disponibile: e' stato usato
-  `ASAN_OPTIONS=detect_leaks=0:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 ./tests_sanitized`.
-- **Conteggi:** confronti fra chiavi; passi di scansione verso nodi dati; scritture di `next`, incluse
-  inizializzazioni e sentinelle. Allocazioni/liberazioni contano solo i nodi dati. Il grafico somma i primi tre.
-- **Limiti:** tre seed, ambiente condiviso, inserimenti dopo il massimo e altezza limitata a 32.
-  Un fit dei tempi va confrontato con l'analisi teorica.
-- **Fonti e strumenti:** consegna del corso, [Google Benchmark](https://github.com/google/benchmark/tree/v1.9.4)
-  e assistenza di ChatGPT per codice, test, script e documentazione.
+The sizes are N = 1024, 4096, 16384, 65536, 262144, and 1048576.
+The height seeds are 11, 42, and 2026. The second list in the union uses
+seed + 1000003. Each measurement is repeated three times per seed, on one thread.
 
-Prima della consegna aggiungi `report.pdf` in inglese (massimo due A4) e compila:
-**Autore: DA COMPILARE. Matricola: DA COMPILARE.**
+Search queries use 50% present keys and 50% missing keys. Keys are sampled uniformly,
+with repeats allowed, and the queries are then shuffled. The query generator is
+separate from the height generator and uses seed 20261023 + N.
+Insertions add new keys above the current maximum: each batch grows the list
+from N to N+64 keys. Union uses two lists with N/2 keys each.
+Split divides the list into two equal halves.
 
-Dichiarazione da confermare dall'autore: «Il lavoro e' individuale; dichiaro le fonti e
-l'assistenza AI indicate e confermo di aver verificato e compreso codice e risultati».
+Each iteration measures 256 searches or 64 insertions. For the other operations,
+it measures one call. Plotted times and fitted coefficients are divided by the batch size.
+The iteration counts are limited to 256 for search/insert, 1000 for union/split,
+and 3 for the rebuilding split, to keep the experiments short.
+Input setup and restoration are not timed.
+
+The counters record key comparisons, steps to data nodes, and writes to the
+`next` pointers, including initialization and sentinels. The work plot adds
+these three counts. Allocation and free counts include only data nodes.
+The rebuilding split uses normal insertions and frees the original nodes.
+
+## 6. Mac environment
+
+Apple Clang 21.0.0 (clang-2100.1.1.101), Google Benchmark 1.10.0,
+Python 3.13.7, and Matplotlib 3.10.8; macOS 26.6.2, arm64, Apple M2.
+The code is compiled as C++17 with macOS SDK 26.5, using the paths shown above.
+The optimized build flags are `-std=c++17 -O2 -DNDEBUG -Wall -Wextra -Wpedantic`,
+with `-pthread` for the benchmarks. The sanitizer flags are shown in section 2.
+
+## 7. Limits, sources, and submission
+
+The experiments use three seeds, heights capped at 32 for the listed sizes,
+and insertions above the maximum key. The automatic fits describe these measurements;
+they do not prove the theoretical complexity. The analysis and comparison with the
+work counts belong in the report.
+
+Sources and tools: the assignment and course lectures,
+[Google Benchmark and its official guide](https://github.com/google/benchmark),
+and help from ChatGPT with code, tests, scripts, and documentation.
+
+The submission archive must include the source files, Makefile, tests, benchmarks,
+results, `plot_results.py`, and `report.pdf` in English, with at most two A4 pages.
+Leave out executables, `.dSYM` folders, build folders, and downloaded dependencies.
+`make clean` removes the five executables and keeps the results.
+
+Declaration for the author to confirm before submission:
+"This is individual work. I declare the sources and help listed above, and I confirm
+that I have checked and understood the code and results."
