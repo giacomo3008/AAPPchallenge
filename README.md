@@ -130,7 +130,7 @@ The code is compiled as C++17 with macOS SDK 26.5, using the paths shown above.
 The optimized build flags are `-std=c++17 -O2 -DNDEBUG -Wall -Wextra -Wpedantic`,
 with `-pthread` for the benchmarks. The sanitizer flags are shown in section 2.
 
-## 7. Limits, sources, and submission
+## 7. Limits, sources
 
 The experiments use three seeds, heights capped at 32 for the listed sizes,
 and insertions above the maximum key. The automatic fits describe these measurements;
@@ -140,12 +140,3 @@ work counts belong in the report.
 Sources and tools: the assignment and course lectures,
 [Google Benchmark and its official guide](https://github.com/google/benchmark),
 and help from ChatGPT with code, tests, scripts, documentation, and the report.
-
-The submission archive must include the source files, Makefile, tests, benchmarks,
-results, `plot_results.py`, and `report.pdf` in English, with at most two A4 pages.
-Leave out executables, `.dSYM` folders, build folders, and downloaded dependencies.
-`make clean` removes the five executables and keeps the results.
-
-Declaration for the author to confirm before submission:
-"This is individual work. I declare the sources and help listed above, and I confirm
-that I have checked and understood the code and results."

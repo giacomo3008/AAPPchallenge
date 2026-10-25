@@ -8,7 +8,6 @@
 using Key = std::int64_t;
 using Reference = std::set<Key>;
 
-// Un normale if: rimane attivo anche compilando con -DNDEBUG.
 void check(bool condition, const char* message) {
     if (!condition) {
         std::cerr << "TEST FALLITO: " << message << '\n';

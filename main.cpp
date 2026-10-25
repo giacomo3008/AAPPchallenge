@@ -4,7 +4,6 @@
 #include <string>
 
 int main(int argc, char* argv[]) {
-    // Il seed e' facoltativo: ./demo 11. Senza argomenti usiamo 42.
     std::uint64_t seed = argc > 1 ? std::stoull(argv[1]) : 42;
     SkipList list(seed);
 
@@ -14,7 +13,6 @@ int main(int argc, char* argv[]) {
 
     std::cout << "Lista iniziale:\n";
     list.print();
-    //std::boolalpha fa stampare i valori booleani come true e false, invece di 1 e 0.
     std::cout << std::boolalpha;
     std::cout << "search(20): " << list.search(20) << '\n';
     std::cout << "search(25): " << list.search(25) << '\n';

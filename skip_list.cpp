@@ -170,10 +170,6 @@ std::pair<SkipList, SkipList> SkipList::split(std::int64_t x) {
         COUNT(link_updates, 3);
     }
 
-    /*I due while eliminano dal conteggio i livelli superiori rimasti vuoti
-    Quindi entrambe le nuove liste hanno provvisoriamente lo stesso numero di 
-    livelli della lista originale.
-    Dopo la separazione, però, alcune potrebbero avere livelli superiori vuoti.*/
     while (left.levels > 1 && left.head->next[left.levels - 1] == nullptr) {
         --left.levels;
     }
