@@ -1,0 +1,12 @@
+Final verification on Linux, GCC 14.2.0. Mac timing data were not changed.
+
+make tests
+./tests
+
+Insert, search, split e baseline: OK
+Unioni con liste vuote o di dimensioni diverse: OK
+Indipendenza delle liste e riuso degli input: OK
+Seed 11: 1000 turni, 287 sequenze split/unione: OK
+Seed 42: 1000 turni, 352 sequenze split/unione: OK
+Seed 2026: 1000 turni, 343 sequenze split/unione: OK
+TUTTI I TEST SUPERATI

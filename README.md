@@ -73,7 +73,9 @@ With Make, `make test` builds the tests if needed and runs the same tests as `./
 The tests compare the list with `std::set` and check its structure. They cover
 empty lists, duplicate keys, boundary keys, reuse of inputs, and preservation of nodes.
 They run 1000 mixed operations for each seed: 11, 42, and 2026.
-All tests and ASan/UBSan checks passed without errors.
+The final check on Linux with GCC 14.2.0 passed all tests and ASan/UBSan checks,
+with leak detection enabled. Logs are in `results/tests.txt` and
+`results/sanitizers.txt`. The timing results are from the Mac described in section 6.
 
 ## 4. Experiments and plots
 
@@ -137,7 +139,7 @@ work counts belong in the report.
 
 Sources and tools: the assignment and course lectures,
 [Google Benchmark and its official guide](https://github.com/google/benchmark),
-and help from ChatGPT with code, tests, scripts, and documentation.
+and help from ChatGPT with code, tests, scripts, documentation, and the report.
 
 The submission archive must include the source files, Makefile, tests, benchmarks,
 results, `plot_results.py`, and `report.pdf` in English, with at most two A4 pages.

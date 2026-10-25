@@ -64,7 +64,7 @@ public:
     /*
     SkipList risultato;
         //risultato esiste già: qui avviene un'assegnazione
-        rultato = SkipList::ordered_union(a, b);
+        risultato = SkipList::ordered_union(a, b);
         */
 
 private:
@@ -76,7 +76,7 @@ private:
 
         Node(std::int64_t value, int height)
             : key(value), next(height, nullptr) {}
-        /*dodpo i : vengono inizializzati i campi prima di eseguire il corpo del costruttore.
+        /*Dopo i : vengono inizializzati i campi prima di eseguire il corpo del costruttore.
         key(value) inizializza key con il valore ricevuto.
         next(height, nullptr) costruisce il vettore next con height elementi, tutti inizializzati a nullptr.*/
 

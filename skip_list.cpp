@@ -44,7 +44,6 @@ int SkipList::randomHeight() {
 
 std::array<SkipList::Node*, SkipList::MAX_LEVEL>
 SkipList::findPredecessors(std::int64_t key, bool includeEqual) const {
-    //Node[] previous = new Node[MAX_LEVEL];
     std::array<Node*, MAX_LEVEL> previous;
     for (int i = 0; i < MAX_LEVEL; i++) {
         previous[i] = head;

@@ -4,7 +4,7 @@
 #include <string>
 
 int main(int argc, char* argv[]) {
-    // Il seed e' facoltativo: ./skiplist 11. Senza argomenti usiamo 42.
+    // Il seed e' facoltativo: ./demo 11. Senza argomenti usiamo 42.
     std::uint64_t seed = argc > 1 ? std::stoull(argv[1]) : 42;
     SkipList list(seed);
 
